@@ -72,8 +72,8 @@ React + Java(Spring Boot) でフルリプレイスする。
 ### 1. 共通基盤（全機能に先立って作るもの）
 
 **Entity共通部分**
-- [ ] `entity/BaseEntity.java` — `created_at`/`updated_at`/`created_by_source`/`updated_by_source`を持つ共通親クラス(`@MappedSuperclass`)
-- [ ] `config/JpaAuditingConfig.java` — `@EnableJpaAuditing`の設定(`@CreatedDate`/`@LastModifiedDate`用)
+- [x] `entity/BaseEntity.java` — `created_at`/`updated_at`/`created_by_source`/`updated_by_source`を持つ共通親クラス(`@MappedSuperclass`)（2026-08-24 作成・反映済み。`created_at`/`updated_at`は`@CreatedDate`/`@LastModifiedDate`で自動セット。`created_by_source`/`updated_by_source`は受け皿のみで、値のセットは次の「リクエスト元追跡」タスクで実装予定）
+- [x] `config/JpaAuditingConfig.java` — `@EnableJpaAuditing`の設定(`@CreatedDate`/`@LastModifiedDate`用)（2026-08-24 作成・反映済み）
 
 **リクエスト元追跡(`created_by_source`)**
 - [ ] `interceptor/RequestSourceInterceptor.java` — リクエストのメソッド+パスをThreadLocalに保持
@@ -226,6 +226,7 @@ React + Java(Spring Boot) でフルリプレイスする。
 
 ## 次にやること（未着手）
 
+- バックエンド: 「1. 共通基盤」の残タスク（リクエスト元追跡、例外・エラーハンドリング、JWT認証）
 - フロントエンド: 各画面（商品一覧、カート、会員機能、購入、出品者ダッシュボード等）の実装（バックエンドAPI実装完了後に着手）
 
 ## 運用ルール（重要）
