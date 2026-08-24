@@ -231,9 +231,10 @@ React + Java(Spring Boot) でフルリプレイスする。
 
 ## 運用ルール（重要）
 
-- Claude Codeの役割は基本的に「相談・原因調査・ソース解析」に限定する方針だったが、今後は実装作業も依頼する予定（人間側の指示があった範囲で実施）
-- Gitのコミット・プッシュは人間側（SourceTree等）で行う。Claude Codeに勝手にコミットさせない
-- `projects` 共有フォルダはNFS経由で読み取り専用マウントされる構成のものと、Docker内で書き込み可能な構成のものが混在するため、書き込みが必要な作業ではマウント方式を確認すること
-- 【2026-08-23判明】現状のClaude Codeセッションが動くコンテナからは `/workspace` 全体が読み取り専用マウントになっており、CLAUDE.md含む一切のファイルの新規作成・編集ができない状態。書き込み可能なコンテナ/マウント設定は未整備（要対応・保留中）
-- 上記の暫定対応として、CLAUDE.md更新時はClaude Codeがセッション専用の書き込み可能ディレクトリ（`/tmp/claude-0/-workspace-Git-macrostock-react-java/<セッションID>/scratchpad/`）に更新済みファイルそのものを出力し、人間側が `docker cp` でホストの実ファイルへ上書き→SourceTree等でコミットする運用とする
-- 調査依頼などでExcel(.xlsx)ファイル出力が必要な場合も同様に、上記のセッション専用スクラッチパッドディレクトリに出力し、人間側が `docker cp` で都度取得する。パスはセッションごとに変わるため使い回し不可
+- **Claude Codeの役割**: 相談・原因調査・ソース解析が基本。人間側の指示がある範囲で実装作業も行う
+- **Git操作**: コミット・プッシュは人間側（SourceTree等）が行う。Claude Codeは行わない
+- **ファイル出力先（重要）**:
+  - `/workspace`（`\\NAS888376-YS\projects\Git\macrostock-react-java`）は読み取り専用。直接の編集・新規作成は不可
+  - `/output`（`\\NAS888376-YS\projects\Git\claude-output\macrostock-react-java`）は書き込み可能（2026-08-24確認済み）。CLAUDE.md更新やファイル出力は必ずこちらに行う
+  - 人間側は`/output`の出力物を確認のうえ、本来のプロジェクトフォルダへ反映してコミットする（`docker cp`不要）
+  - 旧方式（セッション専用scratchpad経由 + `docker cp`）は`/output`が使えない場合のみの代替手段
