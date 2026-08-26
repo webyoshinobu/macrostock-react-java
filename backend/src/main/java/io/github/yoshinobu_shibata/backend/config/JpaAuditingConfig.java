@@ -26,16 +26,17 @@ public class JpaAuditingConfig {
     }
 
     /**
-     * created_by_source / updated_by_source に入れる値(本来は"誰が"だが、
-     * 今回は"どのAPIエンドポイントが"更新したかを表す文字列として使う)を返す実装。
+     * created_by_source / updated_by_source に、
+     * "どのAPIエンドポイントが更新したか"(例: "POST /api/photos")をセットする実装。
+     * RequestSourceInterceptor がThreadLocalに保持した値をここで取り出す。
      */
     static class RequestSourceAuditorAware implements AuditorAware<String> {
         @Override
         public Optional<String> getCurrentAuditor() {
-            // TODO: RequestSourceInterceptor実装後、ThreadLocalから
-            //       "POST /api/photos" のようなエンドポイント文字列を取得するよう差し替える
-            // 現時点ではInterceptor未実装のため、仮の固定値を返している
-            return Optional.of("SYSTEM");
+            // ThreadLocalに値がなければ(バッチ処理など、HTTPリクエスト経由でない保存の場合)
+            // "SYSTEM"を代わりにセットする
+            return Optional.ofNullable(RequestSourceInterceptor.getCurrentSource())
+                    .or(() -> Optional.of("SYSTEM"));
         }
     }
 }
