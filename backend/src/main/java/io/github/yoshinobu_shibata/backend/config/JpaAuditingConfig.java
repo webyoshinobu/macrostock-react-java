@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import java.util.Optional;
 
+import io.github.yoshinobu_shibata.backend.interceptor.RequestSourceInterceptor;
+
 /**
  * Spring Data JPAのAuditing(監査)機能を有効化する設定クラス。
  * これにより BaseEntity の @CreatedDate/@LastModifiedDate/@CreatedBy/@LastModifiedBy が
